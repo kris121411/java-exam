@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+
+<html>
+    <head>
+        <title>Test App</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+		<script>
+		$(document).ready(function()
+		{
+			$.ajax({
+			url: "/gettag",
+			success: function(result)
+				{
+				
+				
+					$(result).each(function (index, value) 
+					{ 
+					console.log(value);
+						if(index == 0)
+						{
+							getcontacts(value['tag_name']);
+						}
+						$('#option_tag').append($('<option>', 
+						{ 
+							value: value['tag_name'],
+							text :value['tag_name'], 
+						}));
+					})	
+				}
+			});
+			$('#option_tag').change(function() 
+			{
+				console.log(this);
+					getcontacts(this.value);
+			});
+			
+			function getcontacts(data)
+			{
+			$.ajax({
+					url: "/getcontact",
+					data:{tag:data},
+					success: function(result)
+						{
+						   $("#data_table").find("tr:not(:first)").remove();
+							$(result).each(function (index, value)
+							{ 
+								content = "<tr>"+
+								
+								"<td>"+value['author_id']+"</td>"+
+								"<td>"+value['contact_id']+"</td>"+
+								"<td>"+value['firstname']+"</td>"+
+								"<td>"+value['lastname']+"</td>"+
+								"<td>"+value['company_id']+"</td>"+
+								"<td>"+value['company']+"</td>"+
+								"<td>"+value['title']+"</td>"+
+								"<td>"+value['visible']+"</td>"+
+								
+								"</tr>";
+								
+
+								$('#data_table').append(content);
+							})
+						}
+					});
+			}
+		});
+	</script>
+	<style>
+			table {
+				font-family: arial, sans-serif;
+				border-collapse: collapse;
+				width: 100%;
+			}
+
+			td, th {
+				border: 1px solid #dddddd;
+				text-align: left;
+				padding: 8px;
+			}
+
+			tr:nth-child(even) {
+				background-color: #dddddd;
+			}
+			div {
+				border-radius: 5px;
+				background-color: #f2f2f2;
+				padding: 20px;
+			}
+			select {
+				width: 30%;
+				padding: 12px 20px;
+				display: inline-block;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				box-sizing: border-box;
+				
+			}
+			</style>
+    </head>
+    <body>
+		<div>
+			<select id ="option_tag">
+			</select>
+		</div>
+		 <div>
+		<table id="data_table">
+		  <tr>
+			<th>AUTHOR ID</th>
+			<th>CONTACT ID</th>
+			<th>FIRSTNAME</th>
+			<th>LASTNAME</th>
+			<th>COMPANY ID</th>
+			<th>COMPANY</th>
+			<th>TITLE</th>
+			<th>VISIBLE</th>
+		  </tr>
+		  
+		</table>
+		</div>
+    </body>
+</html>
